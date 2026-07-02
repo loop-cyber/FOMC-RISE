@@ -1,0 +1,216 @@
+{
+  "experiment_name": "experiment_20260525_225748_lasso",
+  "created_at": "2026-05-25T22:59:36",
+  "project_root": ".",
+  "script": "src/modeling/modeling_tuned_baseline_params.py",
+  "inputs": {
+    "panel_file": "data/raw/data_for_text_diff.xlsx",
+    "shock_file": "data/processed/fomc_policy_shocks.csv",
+    "retrieval_file": "outputs/retrieval/fomc_retrieval_pipeline_topk.csv",
+    "baseline_best_params_file": "outputs/modeling/tuning/baseline_tuning_20260525_221743/baseline_best_params.csv"
+  },
+  "outputs": {
+    "experiment_dir": "outputs/modeling/experiments/experiment_20260525_225748_lasso",
+    "figures_dir": "outputs/modeling/experiments/experiment_20260525_225748_lasso/figures",
+    "predictions": "outputs/modeling/experiments/experiment_20260525_225748_lasso/predictions_anti_mean_reversion.csv",
+    "evaluation_summary": "outputs/modeling/experiments/experiment_20260525_225748_lasso/evaluation_summary_anti_mean_reversion.csv",
+    "segment_evaluation_summary": "outputs/modeling/experiments/experiment_20260525_225748_lasso/segment_evaluation_summary_anti_mean_reversion.csv",
+    "incremental_value_summary": "outputs/modeling/experiments/experiment_20260525_225748_lasso/incremental_value_summary_anti_mean_reversion.csv",
+    "xgboost_feature_importance": "",
+    "xgboost_feature_importance_figures": "",
+    "xgboost_permutation_importance": "",
+    "xgboost_permutation_importance_figures": "",
+    "modeling_dataset": "outputs/modeling/experiments/experiment_20260525_225748_lasso/modeling_dataset_anti_mean_reversion.csv"
+  },
+  "targets": [
+    "SPY_ret",
+    "QQQ_ret",
+    "GLD_ret",
+    "UUP_ret"
+  ],
+  "assets": [
+    "SPY",
+    "QQQ",
+    "GLD",
+    "UUP"
+  ],
+  "fast_targets_only": true,
+  "macro_market_features": [
+    "DX-Y.NYB",
+    "^VIX",
+    "DGS2",
+    "DGS10",
+    "CPIAUCSL",
+    "UNRATE",
+    "PAYEMS",
+    "T10Y2Y",
+    "BAA10Y",
+    "UUP_volume",
+    "SPY_volume",
+    "GLD_volume",
+    "QQQ_volume"
+  ],
+  "derived_market_state_features": [
+    "high_vix_regime",
+    "curve_inversion"
+  ],
+  "shock_bases": [
+    "interest_rate_path",
+    "inflation_concern",
+    "growth_concern",
+    "labor_market",
+    "financial_stability"
+  ],
+  "direction_map": {
+    "hawkish": 1,
+    "neutral": 0,
+    "dovish": -1
+  },
+  "confidence_map": {
+    "low": 0.33,
+    "medium": 0.66,
+    "high": 1.0
+  },
+  "seeds": [
+    7,
+    21,
+    42,
+    63,
+    99
+  ],
+  "time_segments": [
+    {
+      "name": "2008_2015",
+      "start": "2008-01-01",
+      "end": "2015-12-31"
+    },
+    {
+      "name": "2016_2019",
+      "start": "2016-01-01",
+      "end": "2019-12-31"
+    },
+    {
+      "name": "2020_2021",
+      "start": "2020-01-01",
+      "end": "2021-12-31"
+    },
+    {
+      "name": "2022_2026",
+      "start": "2022-01-01",
+      "end": "2026-12-31"
+    }
+  ],
+  "prediction_interval": {
+    "level": 0.9,
+    "method": "rolling conformal absolute residual by asset_target and model",
+    "residual_window": 80,
+    "min_residuals": 20,
+    "fallback": "1.64 * rolling 60-observation target volatility",
+    "applies_to_models": [
+      "baseline",
+      "shock_main",
+      "shock_interactions",
+      "rag_memory",
+      "shock_rag",
+      "case_model",
+      "fusion",
+      "fusion_case"
+    ],
+    "evaluation_metrics": [
+      "interval_90pct_coverage",
+      "interval_90pct_avg_width",
+      "interval_90pct_median_width",
+      "interval_90pct_avg_half_width",
+      "interval_width_to_mae"
+    ]
+  },
+  "asset_scale": {
+    "SPY_ret": 1.15,
+    "QQQ_ret": 1.25,
+    "GLD_ret": 1.2,
+    "UUP_ret": 1.1
+  },
+  "xgboost_available": true,
+  "model_family": "lasso",
+  "feature_importance": {
+    "enabled": false,
+    "method": "XGBoost booster importance averaged across configured seeds",
+    "tasks": [
+      "regression",
+      "classification"
+    ],
+    "importance_types": [
+      "weight",
+      "gain",
+      "cover",
+      "total_gain",
+      "total_cover"
+    ],
+    "ranking_metric": "gain",
+    "permutation_importance": {
+      "enabled": false,
+      "task": "classification",
+      "validation_split": "last 30% of each asset target after fitting on first 70%",
+      "repeats": 5,
+      "primary_metric": "balanced_accuracy_drop",
+      "secondary_metric": "direction_accuracy_drop"
+    }
+  },
+  "model_setup": {
+    "regressor": "Lasso(alpha=0.001)",
+    "classifier": "LogisticRegression(penalty='l1', C=0.5, solver='liblinear', class_weight='balanced')",
+    "comparison_note": "same sparse L1 model family for baseline/shock/fusion",
+    "parameter_source": "Per target/model_family/task best params from baseline_best_params.csv",
+    "feature_sets": {
+      "baseline": "macro_market_features + derived_market_state_features",
+      "shock_main": "baseline + shock direction/strength/confidence/score features",
+      "shock_interactions": "baseline + shock_main + shock x market-state interaction features",
+      "rag_memory": "baseline + RAG case-memory features",
+      "shock_rag": "baseline + shock_main + RAG case-memory features",
+      "fusion": "baseline + shock_main + shock_interactions + RAG case-memory features",
+      "case_model": "weighted average of RAG neighbor returns",
+      "fusion_case": "fusion blended with case_model and confidence scaling"
+    }
+  },
+  "backtest": {
+    "start_train_rule": "per target after filtering non-missing target rows: min(85, max(55, len(target_df) // 3))",
+    "n_modeling_rows": 222,
+    "n_prediction_rows": 523,
+    "target_windows": [
+      {
+        "target": "SPY_ret",
+        "available_nonnull_rows": 222,
+        "start_train": 74,
+        "prediction_rows_planned": 148,
+        "sample_start_date": "2000-02-02 00:00:00",
+        "sample_end_date": "2026-03-18 00:00:00"
+      },
+      {
+        "target": "QQQ_ret",
+        "available_nonnull_rows": 222,
+        "start_train": 74,
+        "prediction_rows_planned": 148,
+        "sample_start_date": "2000-02-02 00:00:00",
+        "sample_end_date": "2026-03-18 00:00:00"
+      },
+      {
+        "target": "GLD_ret",
+        "available_nonnull_rows": 180,
+        "start_train": 60,
+        "prediction_rows_planned": 120,
+        "sample_start_date": "2004-12-14 00:00:00",
+        "sample_end_date": "2026-03-18 00:00:00"
+      },
+      {
+        "target": "UUP_ret",
+        "available_nonnull_rows": 162,
+        "start_train": 55,
+        "prediction_rows_planned": 107,
+        "sample_start_date": "2007-03-21 00:00:00",
+        "sample_end_date": "2026-03-18 00:00:00"
+      }
+    ],
+    "prediction_date_min": "2008-06-25 00:00:00",
+    "prediction_date_max": "2026-03-18 00:00:00"
+  }
+}

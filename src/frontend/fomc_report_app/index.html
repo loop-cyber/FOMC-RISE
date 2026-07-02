@@ -1,0 +1,159 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>FOMC 多资产预测用户报告工作台</title>
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body>
+    <div class="app-shell">
+      <aside class="side-nav" aria-label="报告导航">
+        <div class="brand">
+          <span class="brand-mark">F</span>
+          <div>
+            <strong>FOMC Report</strong>
+            <span>hgbdt / fusion</span>
+          </div>
+        </div>
+
+        <nav>
+          <a href="#overview" class="active">总览</a>
+          <a href="#predictions">预测结果</a>
+          <a href="#evidence">证据链</a>
+        </nav>
+      </aside>
+
+      <main>
+        <header class="topbar">
+          <div>
+            <p class="eyebrow">Model Result to User Report</p>
+            <h1>FOMC 多资产预测用户报告工作台</h1>
+          </div>
+          <div class="top-actions">
+            <a class="icon-link" href="/README.md" target="_blank" rel="noreferrer">项目说明</a>
+          </div>
+        </header>
+
+        <section id="overview" class="section">
+          <div class="section-head">
+            <div>
+              <p class="eyebrow">Current Event</p>
+              <h2 id="event-title">当前 FOMC 事件</h2>
+            </div>
+            <div class="status-strip">
+              <span id="model-chip"></span>
+              <span id="experiment-chip"></span>
+            </div>
+          </div>
+
+          <div class="question-panel">
+            <label for="question-input">用户问题</label>
+            <textarea id="question-input" rows="3"></textarea>
+            <label for="current-statement-input">当前声明文本</label>
+            <textarea id="current-statement-input" rows="8"></textarea>
+            <label for="previous-statement-input">上一期声明文本</label>
+            <textarea id="previous-statement-input" rows="5"></textarea>
+            <div class="question-actions">
+              <button class="control-button primary" id="generate-llm-report">RAG 检索 + 模型预测 + 生成逻辑链报告</button>
+              <span id="generation-status">等待用户输入问题后生成报告</span>
+            </div>
+          </div>
+
+          <div class="metric-grid" id="metric-grid"></div>
+
+          <div class="split-layout">
+            <article class="panel">
+              <div class="panel-head">
+                <h3>事件信息</h3>
+              </div>
+              <dl class="event-list" id="event-list"></dl>
+              <p class="statement" id="statement-excerpt"></p>
+            </article>
+
+            <article class="panel">
+              <div class="panel-head">
+                <h3>市场状态</h3>
+              </div>
+              <div class="state-grid" id="market-state"></div>
+            </article>
+          </div>
+        </section>
+
+        <section id="predictions" class="section">
+          <div class="section-head">
+            <div>
+              <p class="eyebrow">Quantitative Forecast</p>
+              <h2>多资产量化预测</h2>
+            </div>
+            <button class="control-button" id="copy-report">复制用户报告</button>
+          </div>
+
+          <div class="asset-grid" id="asset-grid"></div>
+
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>资产</th>
+                  <th>方向</th>
+                  <th>预测收益</th>
+                  <th>90% 区间</th>
+                </tr>
+              </thead>
+              <tbody id="prediction-table"></tbody>
+            </table>
+          </div>
+
+          <div class="panel">
+            <div class="panel-head">
+              <h3>hgbdt/fusion 评估摘要</h3>
+            </div>
+            <div class="eval-grid" id="evaluation-grid"></div>
+          </div>
+        </section>
+
+        <section id="evidence" class="section">
+          <div class="section-head">
+            <div>
+              <p class="eyebrow">Evidence Chain</p>
+              <h2>政策冲击与历史案例</h2>
+            </div>
+          </div>
+
+          <div class="split-layout">
+            <article class="panel">
+              <div class="panel-head">
+                <h3>政策冲击分解</h3>
+              </div>
+              <div class="shock-list" id="shock-list"></div>
+            </article>
+
+            <article class="panel">
+              <div class="panel-head">
+                <h3>历史相似案例</h3>
+              </div>
+              <div class="case-list" id="case-list"></div>
+            </article>
+          </div>
+
+          <article class="panel logic-panel">
+            <div class="panel-head">
+              <h3>LLM 逻辑链分析报告</h3>
+              <div class="button-row">
+                <button class="control-button" id="copy-llm-report">复制 LLM 报告</button>
+                <button class="control-button" id="export-llm-pdf">导出 PDF</button>
+              </div>
+            </div>
+            <div class="llm-report" id="llm-report"></div>
+          </article>
+        </section>
+      </main>
+    </div>
+
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+    <script src="app_data.js?v=20260527_2"></script>
+    <script src="app.js?v=20260527_2"></script>
+  </body>
+</html>

@@ -1,0 +1,14 @@
+event_id: {event_id}
+meeting_date: {meeting_date}
+document_type: {document_type}
+
+=== Structured text diff (previous -> current; lines prefixed with - removed, + added) ===
+{unified_diff}
+
+=== PREVIOUS statement (full text; may be truncated) ===
+{previous_statement_text}
+
+=== CURRENT statement (full text; may be truncated) ===
+{statement_text}
+
+Return the JSON object as specified in the system message.
