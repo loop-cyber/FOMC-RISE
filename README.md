@@ -232,8 +232,4 @@ src/frontend/fomc_report_app/app_data.js
 | `src/app/generate_logic_chain_report.py` | 生成 LLM 逻辑链报告 |
 | `src/app/serve_frontend.py` | 启动本地前端服务 |
 
-## 说明
 
-所有脚本均使用项目根目录下的相对路径，不依赖个人电脑绝对路径。脚本内部通过 `Path(__file__).resolve().parents[2]` 定位项目根目录，因此可以从项目根目录直接运行。
-
-当前交付包不包含 `outputs/modeling/tuning/baseline_tuning_20260525_221743/baseline_best_params.csv` 时，相关脚本会使用默认模型参数继续运行，不影响前端静态展示和 `hgbdt` 在线推理入口启动。
